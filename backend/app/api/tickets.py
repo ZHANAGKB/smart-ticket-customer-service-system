@@ -13,7 +13,7 @@ router = APIRouter(prefix="/tickets", tags=["tickets"])
 @router.post("", response_model=ticketRead, status_code=status.HTTP_201_CREATED)
 
 # payload 是前端应该发给后端的内容
-async def ticketCreate(payload: ticketCreate, db: AsyncSession = Depends(get_db)) -> Tickets:
+async def create_ticket(payload: ticketCreate, db: AsyncSession = Depends(get_db)) -> Tickets:
     requester = await db.get(User, payload.requester_id)
     if requester is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Requester not found")
@@ -32,7 +32,7 @@ async def ticketCreate(payload: ticketCreate, db: AsyncSession = Depends(get_db)
 # get list of tickets
 @router.get("", response_model=list[ticketRead])
 
-async def listTickets(db: AsyncSession = Depends(get_db)) -> list[Tickets]:
+async def list_tikcets(db: AsyncSession = Depends(get_db)) -> list[Tickets]:
     result = await db.execute(select(Tickets))
 
     return result.scalars().all()
@@ -40,7 +40,7 @@ async def listTickets(db: AsyncSession = Depends(get_db)) -> list[Tickets]:
 # get the tickets with the ticket id
 @router.get("/{tickets_id}", response_model=ticketRead)
 
-async def getTikcets(tickets_id: int, db: AsyncSession = Depends(get_db)) -> Tickets:
+async def get_tickets(tickets_id: int, db: AsyncSession = Depends(get_db)) -> Tickets:
     result = await db.get(Tickets, tickets_id)
     if result is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ticket not found")
@@ -50,7 +50,7 @@ async def getTikcets(tickets_id: int, db: AsyncSession = Depends(get_db)) -> Tic
 # Update the ticket details
 @router.put("/{tickets_id}", response_model=ticketUpdate, status_code=status.HTTP_200_OK)
 
-async def updateTickets(tickets_id: int, payload: ticketUpdate, db: AsyncSession = Depends(get_db)) -> Tickets:
+async def update_tickets(tickets_id: int, payload: ticketUpdate, db: AsyncSession = Depends(get_db)) -> Tickets:
     ticket = await db.get(Tickets, tickets_id)
     if ticket is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ticket not found")
@@ -64,7 +64,7 @@ async def updateTickets(tickets_id: int, payload: ticketUpdate, db: AsyncSession
     return ticket
 
 @router.delete("/{tickets_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def deleteTickets(tickets_id: int, db: AsyncSession = Depends(get_db)) -> None:
+async def delete_tickets(tickets_id: int, db: AsyncSession = Depends(get_db)) -> None:
     ticket = await db.get(Tickets, tickets_id)
     if ticket is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ticket not found")
