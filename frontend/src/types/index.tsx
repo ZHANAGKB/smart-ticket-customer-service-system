@@ -69,3 +69,8 @@ export interface ReplyCreate {
   author_id: number
   content: string
 }
+
+export interface TicketListParams {
+  status?: TicketStatus
+  priority?: TicketPriority
+}

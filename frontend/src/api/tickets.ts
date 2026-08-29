@@ -2,12 +2,12 @@ import { apiClient } from './client'
 
 import type {
   Ticket,
+  TicketListParams,
   TicketCreate,
   TicketUpdate,
   ReplyCreate,
   Reply
 } from '../types'
-
 export const ticketApi = {
   // Create ticket
   async create(data: TicketCreate): Promise<Ticket> {
@@ -16,8 +16,12 @@ export const ticketApi = {
   },
 
   // Get ticket list
-  async list(): Promise<Ticket[]> {
-    const response = await apiClient.get<Ticket[]>('/tickets')
+  async list(params?: TicketListParams): Promise<Ticket[]> {
+    const response = await apiClient.get<Ticket[]>(
+      '/tickets',
+      { params }
+    )
+
     return response.data
   },
 

@@ -4,7 +4,7 @@ from sqlalchemy import select
 
 from app.db.models import Tickets,User
 from app.db.session import get_db
-from app.schemas.tickets import ticketCreate, ticketRead, ticketUpdate
+from app.schemas.tickets import ticketCreate, ticketRead, ticketUpdate, TicketStatus, PriorityStatus
 
 router = APIRouter(prefix="/tickets", tags=["tickets"])
 
@@ -32,10 +32,18 @@ async def create_ticket(payload: ticketCreate, db: AsyncSession = Depends(get_db
 # get list of tickets
 @router.get("", response_model=list[ticketRead])
 
-async def list_tikcets(db: AsyncSession = Depends(get_db)) -> list[Tickets]:
-    result = await db.execute(select(Tickets))
+async def list_tikcets(status: TicketStatus | None = None,
+                       priority: PriorityStatus | None = None,
+                       db: AsyncSession = Depends(get_db)) -> list[Tickets]:
+    query = select(Tickets)
+    if status is not None:
+        query = query.where(Tickets.status == status)
+    if priority is not None:
+        query = query.where(Tickets.priority == priority)
 
-    return result.scalars().all()
+    result = await db.execute(query.order_by(Tickets.id))
+
+    return list(result.scalars().all())
 
 # get the tickets with the ticket id
 @router.get("/{tickets_id}", response_model=ticketRead)
