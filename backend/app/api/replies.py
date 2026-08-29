@@ -10,7 +10,7 @@ router = APIRouter(prefix="/tickets/{tickets_id}/replies", tags= ["replies"])
 
 @router.post("", response_model=replyRead ,status_code=status.HTTP_201_CREATED)
 
-async def replyCreate(tickets_id: int, payload: replyCreate, db: AsyncSession = Depends(get_db)) -> Reply:
+async def create_reply(tickets_id: int, payload: replyCreate, db: AsyncSession = Depends(get_db)) -> Reply:
 
     author = await db.get(User, payload.author_id)
     if author is None:
@@ -33,7 +33,7 @@ async def replyCreate(tickets_id: int, payload: replyCreate, db: AsyncSession = 
 
 @router.get("", response_model=list[replyRead])
 
-async def listReply(tickets_id:int, db: AsyncSession = Depends(get_db)) -> list[Reply]:
+async def list_reply(tickets_id:int, db: AsyncSession = Depends(get_db)) -> list[Reply]:
     ticket = await db.get(Tickets, tickets_id)
     if ticket is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ticket not found")
