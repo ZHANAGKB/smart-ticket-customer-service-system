@@ -5,6 +5,7 @@ from app.core.config import get_settings
 from app.api.users import router as users_router
 from app.api.tickets import router as tickets_router
 from app.api.replies import router as replies_router
+from app.api.kb import router as kb_router
 
 settings = get_settings()
 
@@ -16,6 +17,7 @@ app.include_router(tickets_router)
 # replies router
 app.include_router(replies_router)
 
+app.include_router(kb_router)
 
 
 @app.get("/health", tags=["system"])
